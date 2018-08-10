@@ -1,0 +1,7 @@
+*.DS_STORE
+*.pyc
+*.sw[op]
+coverage.xml
+.coverage
+.tox/
+*.egg-info/
