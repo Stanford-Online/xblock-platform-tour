@@ -3,156 +3,101 @@ This is the core logic for the Platform Tour xblock, which introduces students t
 a course through a digital tour.
 """
 import json
-import pkg_resources
-from django.template import Context
-from django.template.loader import get_template
+import os
+
+from django.template.context import Context
 from xblock.core import XBlock
-from xblock.fields import Dict, Scope, String
+from xblock.fields import List
+from xblock.fields import Scope
+from xblock.fields import String
 from xblock.fragment import Fragment
-from xblockutils.studio_editable import StudioEditableXBlockMixin
+from xblockutils.resources import ResourceLoader
 
-def _resource_string(path):
-    """Handy helper for getting resources from our kit."""
-    data = pkg_resources.resource_string(__name__, path)
-    return data.decode("utf8")
+from . import default_steps
 
-class PlatformTourXBlock(XBlock, StudioEditableXBlockMixin):
+
+class PlatformTourXBlock(XBlock):
     """
     Allows students to tour through the course and get familiar with the
     platform.
     """
 
+    loader = ResourceLoader(__name__)
+
     display_name = String(
         display_name=('Display Name'),
         help=(
-            'This is the title for this component'
+            'The title for this component'
         ),
         default='Platform Tour',
         scope=Scope.settings,
     )
-
     button_label = String(
         display_name=('Button label'),
-        help=('This is the text that will appear on the button'),
+        help=(
+            'The text that will appear on the button on which learners click'
+            ' to start the Platform Tour.'
+        ),
         default='Begin Platform Tour',
         scope=Scope.settings,
     )
-
     intro = String(
         display_name=('Introduction text'),
-        help=('This is the introduction that will precede the button'
-            ' and explain its presence to the user'),
-        default='Click the button below to learn how to navigate the platform!',
+        help=(
+            'The introduction that will precede the button'
+            ' and explain its presence to the user'
+        ),
+        default='Click the button below to learn how to navigate the platform.',
         scope=Scope.settings,
     )
-
-    steps = Dict(
-        display_name=('Steps in the Platform Tour'),
-        help=('Data representing the steps that the tour takes through platform courseware'),
-        default={
-            "steps": [{
-                "name": "#navmaker",
-                "dataIntro": "Welcome to the Platform Tour! Let's start by exploring the tabs at the top of the page.",
-                "dataPosition": "right",
-            },
-            {
-                "name": ".course-tabs",
-                "find": "a:contains('Course')",
-                "dataIntro": "You are in the Course tab, where all the materials are found.",
-                "dataPosition": "right",
-            },
-            {
-                "name": "div#seq_content",
-                "dataIntro": "You are looking at content in a page, or unit.",
-                "dataPosition": "top",
-            },
-            {
-                "name": ".nav-item.nav-item-sequence",
-                "dataIntro": "Notice the trail of breadcrumb links above the content. You are currently on a page, or unit...",
-                "dataPosition": "below",
-            },
-            {
-                "name": ".nav-item.nav-item-section",
-                "dataIntro": "...in a lesson, or subsection...",
-                "dataPosition": "below",
-            },
-            {
-                "name": ".nav-item.nav-item-chapter",
-                "dataIntro": "...in a module, or section. Clicking on a breadcrumb will take you to your course's table of contents, and drop you onto the portion related to the section or subsection you clicked on.",
-                "dataPosition": "right",
-            },
-            {
-                "name": ".nav-item.nav-item-course",
-                "dataIntro": "This 'Course' link will also take you to the table of contents, but to the beginning, as     opposed to a specific section or subsection.",
-                "dataPosition": "right",
-            },
-            {
-                "name": "#sequence-list",
-                "dataIntro": "Every lesson or subsection is structured as a sequence of pages, or units. Each button on this navigator corresponds to a page of content. You should go through the pages from left to right.",
-                "dataPosition": "left",
-            },
-            {
-                "name": "#tab_0",
-                "dataIntro": "You are currently viewing the first page of content.",
-                "dataPosition": "left",
-            },
-            {
-                "name": "#tab_1",
-                "dataIntro": "Move to the next page of content by clicking the icon in the highlighted tab...",
-                "dataPosition": "left",
-            },
-            {
-                "name": ".sequence-nav",
-                "find": ".sequence-nav-button.button-next",
-                "dataIntro": "...or the arrow to the right.",
-                "dataPosition": "left",
-            },
-            {
-                "name": ".bookmark-button-wrapper",
-                "dataIntro": "If you want to get back later to the content on a particular page, or you want to save it as something important, bookmark it. A Bookmarks folder on your course home page will contain a link to any page you bookmark for easy access later.",
-                "dataPosition": "right",
-            },
-            {
-                "name": ".course-tabs",
-                "find": "a:contains('Progress')",
-                "dataIntro": "Visit the Progress page to check your scores on graded content in the course.",
-                "dataPosition": "left",
-            },
-            {
-                "name": ".course-tabs",
-                "find": "a:contains('Discussion')",
-                "dataIntro": "For course-specific questions, click on the \"Discussion\" tab to post your question to the forum. Peers and course teams may be able to answer your question there.",
-                "dataPosition": "left",
-            },
-            {
-                "name": "a.doc-link",
-                "dataIntro": "For any technical issues or platform-specific questions, click on the \"Help\" link to access the Help Center or contact support.",
-                "dataPosition": "bottom",
-            },
-            {
-                "name": "div.course-wrapper",
-                "dataIntro": "That concludes the platform tour. \n\n Click Done to close this tour.",
-                "dataPosition": "top",
-            },
-        ],},
+    enabled_default_steps = List(
+        display_name=('Choose the steps for the Platform Tour'),
+        help=(
+            'List representing steps of the tour'
+        ),
+        default=[],
+        multiline_editor=True,
+        scope=Scope.settings,
+        resettable_editor=False,
+    )
+    custom_steps = List(
+        display_name=('Custom steps for the platform tour'),
+        help=(
+            'JSON dictionaries representing additional steps of the tour'
+        ),
+        default=[],
         multiline_editor=True,
         scope=Scope.settings,
     )
 
-    editable_fields = (
-        'display_name',
-        'button_label',
-        'intro',
-        'steps',
-    )
+    def get_resource_url(self, path):
+        """
+        Retrieve a public URL for the file path
+        """
+        path = os.path.join('public', path)
+        resource_url = self.runtime.local_resource_url(self, path)
+        return resource_url
 
     def build_fragment(
-        self,
-        template,
-        contect_dict,
+            self,
+            rendered_template,
+            initialize_js_func,
+            additional_css=None,
+            additional_js=None,
     ):
-        context = Context(contect_dict)
-        fragment = Fragment(template.render(context))
+        """
+        Build the HTML fragment, and add required static assets to it.
+        """
+        additional_css = additional_css or []
+        additional_js = additional_js or []
+        fragment = Fragment(rendered_template)
+        for item in additional_css:
+            url = self.get_resource_url(item)
+            fragment.add_css_url(url)
+        for item in additional_js:
+            url = self.get_resource_url(item)
+            fragment.add_javascript_url(url)
+        fragment.initialize_js(initialize_js_func)
         return fragment
 
     def student_view(self, context=None):
@@ -160,43 +105,118 @@ class PlatformTourXBlock(XBlock, StudioEditableXBlockMixin):
         The primary view of the PlatformTourXBlock, shown to students
         when viewing courses.
         """
+        step_choice_dict = default_steps.get_display_steps(self.enabled_default_steps)
+        if 'custom' in self.enabled_default_steps:
+            step_choice_dict.extend(self.custom_steps)
+        steps = json.dumps(step_choice_dict)
+
         context = context or {}
         context.update(
             {
                 'display_name': self.display_name,
                 'button_label': self.button_label,
                 'intro': self.intro,
-                'steps': json.dumps(self.steps['steps']),
+                'steps': steps,
             }
         )
-        template = get_template('platformtour.html')
+        rendered_template = self.loader.render_django_template(
+            'templates/platformtour.html',
+            context=Context(context),
+        )
         fragment = self.build_fragment(
-            template,
-            context
+            rendered_template,
+            initialize_js_func='PlatformTourXBlock',
+            additional_css=[
+                'css/platformtour.css',
+            ],
+            additional_js=[
+                'js/src/intro.js',
+                'js/src/platformtour.js',
+            ],
         )
-        fragment.add_css(
-            _resource_string(
-                'static/css/platformtour.css'
-            ),
-        )
-        fragment.add_javascript(_resource_string('static/js/src/platformtour.js'))
-        fragment.initialize_js('PlatformTourXBlock')
         return fragment
+
+    def studio_view(self, context=None):
+        """
+        Build the fragment for the edit/studio view
+        Implementation is optional.
+        """
+        step_choice_keys = self.enabled_default_steps or default_steps.get_default_keys()
+        context = context or {}
+        context.update(
+            {
+                'display_name': self.display_name,
+                'button_label': self.button_label,
+                'intro': self.intro,
+                'enabled_default_steps': default_steps.get_choices(step_choice_keys),
+                'custom_steps': json.dumps(self.custom_steps),
+            }
+        )
+        rendered_template = self.loader.render_django_template(
+            'templates/platformtour_studio.html',
+            context=Context(context),
+        )
+        fragment = self.build_fragment(
+            rendered_template,
+            initialize_js_func='PlatformTourStudioUI',
+            additional_css=[
+                'css/platformtour_studio.css',
+            ],
+            additional_js=[
+                'js/src/platformtour_studio.js',
+            ],
+        )
+        return fragment
+
+    @XBlock.json_handler
+    def studio_view_save(self, data, suffix=''):
+        """
+        Save XBlock fields
+        Returns: the new field values
+        """
+
+        self.display_name = data['display_name']
+        self.button_label = data['button_label']
+        self.intro = data['intro']
+        self.enabled_default_steps = data['enabled_default_steps']
+        self.custom_steps = data['custom_steps']
+
+        return {
+            'display_name': self.display_name,
+            'button_label': self.button_label,
+            'intro': self.intro,
+            'enabled_default_steps': self.enabled_default_steps,
+            'custom_steps': self.custom_steps,
+        }
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
     @staticmethod
     def workbench_scenarios():
-        """A canned scenario for display in the workbench."""
+        """
+        A canned scenario for display in the workbench.
+        """
         return [
             ("PlatformTourXBlock",
              """<platformtour/>
              """),
             ("Multiple PlatformTourXBlock",
              """<vertical_demo>
-                <platformtour/>
-                <platformtour/>
-                <platformtour/>
+                    <platformtour
+                        display_name="Platform Tour 1"
+                        button_label="Start Tour #1"
+                        intro="This is the Platform Tour #1, click the button to start."
+                    />
+                    <platformtour
+                        display_name="Platform Tour 2"
+                        button_label="Start Tour #2"
+                        intro="This is the Platform Tour #2, click the button to start."
+                    />
+                    <platformtour
+                        display_name="Platform Tour 3"
+                        button_label="Start Tour #3"
+                        intro="This is the Platform Tour #3, click the button to start."
+                    />
                 </vertical_demo>
              """),
         ]

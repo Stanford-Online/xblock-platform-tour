@@ -1,94 +1,13 @@
-<article><!-- This style sheet is necessary for the intro.js text blocks to work. -->
-  <link rel="stylesheet" type="text/css" href="/static/css/platformtour.css">
+<article>
+    <h2 class="problem-header">{{ display_name }}</h2>
+    <p>{{ intro }}</p>
 
-  <!-- So is this script. -->
-  <script src="/static/js/src/platformtour.js"></script>
+    <button class="navmaker">{{ button_label }}</button>
 
-  <script>
-    $(document).ready(function(){
-
-      /*****************************************************
-      * This section enables the intro.js text blocks.
-      * They're set in the addNavData() function below.
-      *****************************************************/
-
-      addNavData();
-
-      $('#navmaker').on('click tap', function(){
-          introJs().start();
-      });
-
-      // End of intro.js code.
-
-    });
-
-    /**************************************************************
-    * This function adds the data needed for the intro.js text blocks.
-    * We're doing it here rather than in the HTML directly.
-    **************************************************************/
-    function addNavData(){
-
-      var platformTourData = [];
-      var stepList = {{steps|safe}};
-      var stepCount = 0;
-      stepList.forEach(function(step) {
-          if (step.find) {
-              platformTourData.push($(step.name).find(step.find));
-          } else {
-              platformTourData.push($(step.name));
-          }
-          if (platformTourData[stepCount]) {
-              platformTourData[stepCount].attr("data-step", stepCount + 1);
-              platformTourData[stepCount].attr("data-intro", step.dataIntro);
-              platformTourData[stepCount].attr("data-position", step.dataPosition);
-          }
-          stepCount += 1;
-      });
-    }
-  </script>
-
-  <h2 class="problem-header">{{ display_name }}</h2>
-  <p>{{ intro }}</p>
-
-  <button id="navmaker" style="color: white; font-size: medium; text-shadow: none; background: linear-gradient(to top, #0b0 0%,#080 20%,#0e0 100%); background-color:green;"> {{ button_label }}</button>
+    <div class="sr">
+        <h4>Screen Reader Accessible Version of the Platform Tour</h4>
+        <ol class="screen-reader-steps"></ol>
+    </div>
 </article>
 
-<script>
-  function unhide(spanID) {
-    var item = document.getElementById(spanID);
-    if (item) {
-      item.className=(item.className=='hidden')?'unhidden':'hidden';
-    }
-  }
-
-  function hide(spanID) {
-    var item = document.getElementById(spanID);
-    if (item) {
-      item.className='hidden';
-    }
-  }
-
-  function check(RadioID){
-    document.getElementById(RadioID).checked=true;
-  }
-
-  function changeHiddenInput (objDropDown, hiddenID){
-    var objHidden = document.getElementById(hiddenID);
-    var strUser = objDropDown.options[objDropDown.selectedIndex].value;
-    objHidden.value = strUser;
-  }
-</script>
-
-<h4><span class="ui-accordion-header-icon ui-icon ui-icon-triangle-1-e" style="float: left;"></span><span style="cursor: pointer;" onclick="unhide('screen-reader-version')">Screen Reader Accessible Version of the Platform Tour</span></h4>
-
-<div id="screen-reader-version" class="hidden" style="padding-bottom: 1em;">
-  <p>At the top of the screen are several tabs.</p>
-  <ul>
-    <li>The <b>Course</b>&nbsp;tab is where all of the materials are kept, including videos, assignments, and readings. Any new updates from the course team can also be found on this page.</li>
-    <li>The <b>Discussion</b>&nbsp;tab is present in some but not all courses. This is where conversations with peers can be had.</li>
-    <li>The <b>Progress</b>&nbsp;tab is also present in some but not all courses. This is where you can keep track of your work in the course.</li>
-  </ul>
-  <p>Each lesson is divided into a sequence of pages, which are accessed through a navigator ribbon that runs horizontally across the top of the screen.</p>
-  <p>You are currently viewing the first page of content in the Course tab.</p>
-  <p>The lessons are designed to be accessed from left to right. When you are done with this platform tour, click either the Next button in the navigator ribbon or the right arrow.</p>
-</div>
+<script class="platformtour-steps" type="application/json">{{ steps|safe }}</script>
