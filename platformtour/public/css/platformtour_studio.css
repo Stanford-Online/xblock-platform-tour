@@ -1,0 +1,38 @@
+.xblock_platformtour_studio .steps {
+  display: inline-block;
+  width: 45%;
+  border: 1px solid #ccc;
+  vertical-align: top;
+}
+.xblock_platformtour_studio .steps .step {
+  padding: 10px;
+}
+.xblock_platformtour_studio .steps .step.even {
+  background-color: #ddd;
+}
+.xblock_platformtour_studio .steps .step label {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  font-size: 1em;
+  line-height: 1em;
+}
+.xblock_platformtour_studio .steps .step label input {
+  display: none;
+}
+.xblock_platformtour_studio .steps .step label i {
+  position: absolute;
+  right: 0;
+  width: 20px;
+}
+
+.xblock_platformtour_studio .custom-steps {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+.xblock_platformtour_studio .custom-steps.enabled {
+  display: block;
+}

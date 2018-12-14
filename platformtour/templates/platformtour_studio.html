@@ -1,0 +1,59 @@
+<div class="xblock_platformtour_studio wrapper-comp-settings editor-with-buttons is-active" id="settings-tab">
+    <ul class="list-input settings-list">
+         <li class="field comp-setting-entry is-set">
+            <div class="wrapper-comp-setting">
+                <label class="label setting-label" for="platformtour_studio_display_name">Display Name</label>
+                <input class="input setting-input display-name" id="platformtour_studio_display_name" value="{{ display_name }}" type="text">
+            </div>
+            <span class="tip setting-help">This name appears in the horizontal navigation at the top of the page</span>
+        </li>
+
+         <li class="field comp-setting-entry is-set">
+            <div class="wrapper-comp-setting">
+                <label class="label setting-label" for="platformtour_studio_button_label">Button label</label>
+                <input class="input setting-input button-label" id="platformtour_studio_button_label" value="{{ button_label }}" type="text">
+            </div>
+            <span class="tip setting-help">This is the text that will appear on the button</span>
+        </li>
+
+         <li class="field comp-setting-entry is-set">
+            <div class="wrapper-comp-setting">
+                <label class="label setting-label" for="platformtour_studio_intro">Introduction text</label>
+                <input class="input setting-input intro" id="platformtour_studio_intro" value="{{ intro }}" type="text">
+            </div>
+            <span class="tip setting-help">This is the introduction that will precede the button and explain its presence to the user</span>
+        </li>
+
+        <li class="field comp-setting-entry is-set">
+            <div class="wrapper-comp-setting">
+                <label class="label setting-label" for="platformtour_studio_enabled_steps">Choose the steps for the Platform Tour</label>
+                <div class="steps" id="platformtour_studio_enabled_steps">
+                  {% for step in enabled_default_steps %}
+                    <div class="step {% if forloop.counter|divisibleby:2 %}even{% else %}odd{% endif %}" data-key="{{ step.key }}">
+                      <label>
+                        {{ step.title }}
+                        <input type="checkbox" name="{{ step.key }}" value="{{ step.title }}" {% if step.enabled %}checked{% endif %} data-index="{{ forloop.counter0 }}">
+                        <i class="fa fa-lg {% if step.enabled %}fa-check-square-o{% else %}fa-square-o{% endif %}"></i>
+                      </label>
+                      {% if forloop.last %}
+                      <textarea class="field-data-control custom-steps {% if step.enabled %}enabled{% endif %}" data-field-name="custom_steps" id="platformtour_studio_custom_steps" rows="5" cols="70">{{ custom_steps }}</textarea>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+            </div>
+            <span class="tip setting-help">List representing steps of the tour</span>
+        </li>
+    </ul>
+
+    <div class="xblock-actions">
+        <ul>
+            <li class="action-item">
+                <a href="#" class="button action-primary save-button">Save</a>
+            </li>
+            <li class="action-item">
+                <a href="#" class="button cancel-button">Cancel</a>
+            </li>
+        </ul>
+    </div>
+</div>

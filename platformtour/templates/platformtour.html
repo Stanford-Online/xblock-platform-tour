@@ -1,0 +1,13 @@
+<article>
+    <h2 class="problem-header">{{ display_name }}</h2>
+    <p>{{ intro }}</p>
+
+    <button class="navmaker">{{ button_label }}</button>
+
+    <div class="sr">
+        <h4>Screen Reader Accessible Version of the Platform Tour</h4>
+        <ol class="screen-reader-steps"></ol>
+    </div>
+</article>
+
+<script class="platformtour-steps" type="application/json">{{ steps|safe }}</script>
