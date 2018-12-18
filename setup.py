@@ -24,7 +24,7 @@ def package_data(pkg, roots):
 
 setup(
     name='xblock-platform-tour',
-    version='1.0.1',
+    version='1.0.2',
     description=('This xblock makes it easy for instructors to build a custom tour'
                  ' of the platform and their specific course.'),
     license='AGPL v3',
