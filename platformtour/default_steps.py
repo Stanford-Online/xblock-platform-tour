@@ -28,9 +28,9 @@ DEFAULT_STEPS = [
     {
         'key': 'course_content',
         'title': 'Course Content',
-        'element': 'div#seq_content',
-        'intro': 'You are looking at content in a page, or unit.',
-        'position': 'top',
+        'element': 'div#seq_content .vert-0',
+        'intro': 'You are looking at a piece of content in a page or unit.',
+        'position': 'below',
     },
     {
         'key': 'unit_breadcrumb',
