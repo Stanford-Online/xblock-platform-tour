@@ -21,7 +21,7 @@ DEFAULT_STEPS = [
     {
         'key': 'course_tab',
         'title': 'Course Tab',
-        'element': '.course-tabs a[href*="/courseware"]',
+        'element': '.course-tabs a[href*="/course/"]',
         'intro': 'You are in the Course tab, where all the materials are found.',
         'position': 'right',
     },
