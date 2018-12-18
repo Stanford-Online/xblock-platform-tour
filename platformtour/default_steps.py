@@ -21,16 +21,16 @@ DEFAULT_STEPS = [
     {
         'key': 'course_tab',
         'title': 'Course Tab',
-        'element': '.course-tabs a[href*="/courseware"]',
+        'element': '.course-tabs a[href*="/course/"]',
         'intro': 'You are in the Course tab, where all the materials are found.',
         'position': 'right',
     },
     {
         'key': 'course_content',
         'title': 'Course Content',
-        'element': 'div#seq_content',
-        'intro': 'You are looking at content in a page, or unit.',
-        'position': 'top',
+        'element': 'div#seq_content .vert-0',
+        'intro': 'You are looking at a piece of content in a page or unit.',
+        'position': 'below',
     },
     {
         'key': 'unit_breadcrumb',
@@ -112,7 +112,7 @@ DEFAULT_STEPS = [
             'A Bookmarks folder on your course home page will contain a link to '
             'any page you bookmark for easy access later.'
         ),
-        'position': 'right',
+        'position': 'below',
     },
     {
         'key': 'course_progress',
