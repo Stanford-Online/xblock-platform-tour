@@ -112,7 +112,7 @@ DEFAULT_STEPS = [
             'A Bookmarks folder on your course home page will contain a link to '
             'any page you bookmark for easy access later.'
         ),
-        'position': 'right',
+        'position': 'below',
     },
     {
         'key': 'course_progress',
