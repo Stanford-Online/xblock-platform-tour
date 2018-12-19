@@ -21,7 +21,11 @@ DEFAULT_STEPS = [
     {
         'key': 'course_tab',
         'title': 'Course Tab',
-        'element': '.course-tabs a[href*="/course/"], .course-tabs a[href*="/courseware"]',
+        # The courseware selector below has a leading slash to match the end of the URL.
+        # The course selector below is meant to only have a trailing slash, as edX rewrites
+        # URLs that contain "/course/" for legacy reasons.
+        # See this file: lms/djangoapps/courseware/module_render.py
+        'element': ".course-tabs a[href$='/courseware'], .course-tabs a[href$='course/']",
         'intro': 'You are in the Course tab, where all the materials are found.',
         'position': 'right',
     },
@@ -79,28 +83,28 @@ DEFAULT_STEPS = [
             'Each button on this navigator corresponds to a page of content. '
             'You should go through the pages from left to right.'
         ),
-        'position': 'left',
+        'position': 'below',
     },
     {
         'key': 'filmstrip_first_tab',
         'title': 'First Page Tab',
         'element': '#tab_0',
         'intro': 'You are currently viewing the first page of content.',
-        'position': 'left',
+        'position': 'below',
     },
     {
         'key': 'filmstrip_second_tab',
         'title': 'Second Page Tab',
         'element': '#tab_1',
         'intro': 'Move to the next page of content by clicking the icon in the highlighted tab...',
-        'position': 'left',
+        'position': 'below',
     },
     {
         'key': 'filmstrip_next_arrow',
         'title': 'Next Arrow',
         'element': '.sequence-nav .sequence-nav-button.button-next',
         'intro': '...or the arrow to the right.',
-        'position': 'left',
+        'position': 'below',
     },
     {
         'key': 'bookmarking',
@@ -119,7 +123,7 @@ DEFAULT_STEPS = [
         'title': 'Course Progress',
         'element': '.course-tabs a[href*="/progress"]',
         'intro': 'Visit the Progress page to check your scores on graded content in the course.',
-        'position': 'left',
+        'position': 'right',
     },
     {
         'key': 'discussion_forum',
@@ -130,7 +134,7 @@ DEFAULT_STEPS = [
             'question to the forum. Peers and course teams may be able to answer your '
             'question there.'
         ),
-        'position': 'left',
+        'position': 'right',
     },
     {
         'key': 'help_link',

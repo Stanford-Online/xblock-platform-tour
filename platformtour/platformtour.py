@@ -55,7 +55,7 @@ class PlatformTourXBlock(XBlock):
         help=(
             'List representing steps of the tour'
         ),
-        default=[],
+        default=None,
         multiline_editor=True,
         scope=Scope.settings,
         resettable_editor=False,
@@ -105,8 +105,11 @@ class PlatformTourXBlock(XBlock):
         The primary view of the PlatformTourXBlock, shown to students
         when viewing courses.
         """
-        step_choice_dict = default_steps.get_display_steps(self.enabled_default_steps)
-        if 'custom' in self.enabled_default_steps:
+        enabled_default_step_keys = self.enabled_default_steps
+        if enabled_default_step_keys is None:
+            enabled_default_step_keys = default_steps.get_default_keys()
+        step_choice_dict = default_steps.get_display_steps(enabled_default_step_keys)
+        if 'custom' in enabled_default_step_keys:
             step_choice_dict.extend(self.custom_steps)
         steps = json.dumps(step_choice_dict)
 
@@ -141,14 +144,16 @@ class PlatformTourXBlock(XBlock):
         Build the fragment for the edit/studio view
         Implementation is optional.
         """
-        step_choice_keys = self.enabled_default_steps or default_steps.get_default_keys()
+        enabled_default_step_keys = self.enabled_default_steps
+        if enabled_default_step_keys is None:
+            enabled_default_step_keys = default_steps.get_default_keys()
         context = context or {}
         context.update(
             {
                 'display_name': self.display_name,
                 'button_label': self.button_label,
                 'intro': self.intro,
-                'enabled_default_steps': default_steps.get_choices(step_choice_keys),
+                'enabled_default_steps': default_steps.get_choices(enabled_default_step_keys),
                 'custom_steps': json.dumps(self.custom_steps),
             }
         )
