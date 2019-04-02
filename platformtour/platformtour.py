@@ -24,6 +24,8 @@ class PlatformTourXBlock(XBlock):
 
     loader = ResourceLoader(__name__)
 
+    show_in_read_only_mode = True
+
     display_name = String(
         display_name=('Display Name'),
         help=(
