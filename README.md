@@ -26,5 +26,17 @@ Customization
 -------------
 The button label, introduction, and steps can both be customized by clicking the `Edit` button on the component.
 
-The steps of the platform tour are respresented as a list of dictionaries. There
-are 16 original steps that can be amended or removed.
+The steps of the platform tour are respresented as a set of checkboxes. Users in studio can uncheck checkboxes to
+prevent steps from being shown to users in the LMS.
+
+v1 features and limitations
+---------------------------
+- Checkbox selections are saved as a list of keys.
+- Making any changes in Studio (or just clicking the Save button for the component in Studio) saves the list of
+keys to the database, which effectively "locks" the list.
+- This means the "order" and "step selection" of the list is saved, and does not automatically update with new
+versions of the xBlock.
+- Changes to the values corresponding to the following keys: `title`, `element`, `intro`, and `position` in the
+`default_steps.py` file **DO** get applied even if the xblock is saved into the database in Studio.
+- However, the order and choice selection **DOES NOT** update. (i.e. if the xblock is updated to change the order
+in which the steps are displayed or a new step is added.)
